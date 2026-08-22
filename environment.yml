@@ -7,8 +7,8 @@ channels:
 dependencies:
   - python=3.10
   - jupyterlab
-  - pandas
   - numpy
+  - pandas
   - scikit-learn
   - matplotlib
   - seaborn
