@@ -111,7 +111,7 @@ Los resultados predictivos fueron traducidos a posibles estrategias de retenció
 
 Notebook:
 
-`notebooks/04_estrategia_de_negocio.ipynb`
+notebooks/04_informe_solucion.ipynb
 
 ---
 
@@ -423,7 +423,7 @@ interconnect-churn-prediction/
 │   ├── 01_comprension_e_integracion.ipynb
 │   ├── 02_limpieza_y_eda.ipynb
 │   ├── 03_preparacion_y_modelado.ipynb
-│   └── 04_estrategia_de_negocio.ipynb
+│   └── 04_informe_solucion.ipynb
 │
 ├── reports/
 │   └── informe_solucion.md
