@@ -1,0 +1,13 @@
+name: proyecto_interconnect
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - jupyterlab
+  - pandas
+  - numpy
+  - scikit-learn
+  - seaborn
+  - matplotlib
+
