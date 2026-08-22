@@ -1,10 +1,28 @@
 # Interconnect — Customer Churn Prediction
 
+![Python](https://img.shields.io/badge/Python-3.10.21-blue)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.7.2-orange)
+![CatBoost](https://img.shields.io/badge/CatBoost-1.2.10-yellow)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 Proyecto de Ciencia de Datos orientado a la predicción de cancelación de clientes (*customer churn*) para la empresa de telecomunicaciones **Interconnect**.
 
 El proyecto desarrolla un modelo de Machine Learning capaz de estimar la probabilidad de cancelación de cada cliente con el objetivo de apoyar al área de Marketing en la priorización de campañas y estrategias preventivas de retención.
 
 ---
+
+## ⭐ Project Highlights
+
+- **7,043 clientes** analizados.
+- Modelo final: **CatBoostClassifier + One-Hot Encoding**.
+- **AUC-ROC CV:** 0.8506.
+- **AUC-ROC Test:** 0.8440.
+- **Accuracy Test:** 0.8077.
+- Interpretabilidad mediante **feature importance y SHAP**.
+- Enfoque de negocio basado en **probabilidad de churn como score de riesgo**.
+- Evaluación explícita del **threshold de decisión**.
+- Pipeline reproducible con **Conda y pip**.
 
 ## 🎯 Objetivo de negocio
 
