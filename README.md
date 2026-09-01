@@ -3,12 +3,27 @@
 ![Python](https://img.shields.io/badge/Python-3.10.21-blue)
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.7.2-orange)
 ![CatBoost](https://img.shields.io/badge/CatBoost-1.2.10-yellow)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.62.0-FF4B4B)
+![Airflow](https://img.shields.io/badge/Apache%20Airflow-3.3.1-017CEE)
+![Tests](https://img.shields.io/badge/Tests-29%20passed-brightgreen)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-Proyecto de Ciencia de Datos orientado a la predicción de cancelación de clientes (*customer churn*) para la empresa de telecomunicaciones **Interconnect**.
+Proyecto de Ciencia de Datos orientado a la predicción de cancelación de
+clientes (*customer churn*) para la empresa de telecomunicaciones
+**Interconnect**.
 
-El proyecto desarrolla un modelo de Machine Learning capaz de estimar la probabilidad de cancelación de cada cliente con el objetivo de apoyar al área de Marketing en la priorización de campañas y estrategias preventivas de retención.
+El proyecto desarrolla un sistema de Machine Learning capaz de estimar la
+probabilidad de cancelación de un cliente y convertir esa predicción en una
+herramienta operacional mediante:
+
+- un pipeline de Machine Learning reproducible;
+- una API REST desarrollada con FastAPI;
+- un dashboard interactivo desarrollado con Streamlit;
+- monitoreo de data drift mediante Population Stability Index (PSI);
+- automatización del monitoreo con Apache Airflow;
+- pruebas automatizadas para API, dashboard y monitoring.
 
 ---
 
@@ -19,31 +34,53 @@ El proyecto desarrolla un modelo de Machine Learning capaz de estimar la probabi
 - **AUC-ROC CV:** 0.8506.
 - **AUC-ROC Test:** 0.8440.
 - **Accuracy Test:** 0.8077.
+- Pipeline completo de preprocessing + modelo serializado con `joblib`.
+- API REST de predicción con **FastAPI**.
+- Dashboard ejecutivo y predictor interactivo con **Streamlit**.
+- Validación de entradas mediante **Pydantic**.
 - Interpretabilidad mediante **feature importance y SHAP**.
-- Enfoque de negocio basado en **probabilidad de churn como score de riesgo**.
-- Evaluación explícita del **threshold de decisión**.
+- Monitoreo de drift basado en **Population Stability Index (PSI)**.
+- Perfil de referencia persistente para monitoreo.
+- Simulación controlada de data drift.
+- Automatización diaria mediante **Apache Airflow 3.3.1**.
+- **29 pruebas automatizadas**.
+- Separación entre entorno de Machine Learning y entorno de Airflow.
 - Pipeline reproducible con **Conda y pip**.
+
+---
 
 ## 🎯 Objetivo de negocio
 
-Interconnect busca reducir la pérdida de clientes mediante la identificación anticipada de usuarios con mayor riesgo de cancelar sus servicios.
+Interconnect busca reducir la pérdida de clientes mediante la identificación
+anticipada de usuarios con mayor riesgo de cancelar sus servicios.
 
-La cancelación de clientes representa un problema relevante para una empresa de telecomunicaciones, ya que puede afectar los ingresos recurrentes e incrementar la necesidad de adquirir nuevos clientes.
+La cancelación de clientes representa un problema relevante para una empresa
+de telecomunicaciones porque puede:
 
-El objetivo del proyecto es utilizar información contractual, demográfica, de servicios y facturación para desarrollar un modelo que permita:
+- reducir ingresos recurrentes;
+- aumentar los costos asociados con adquisición de nuevos clientes;
+- disminuir el valor de vida del cliente;
+- generar pérdida de oportunidades comerciales.
+
+El objetivo del proyecto consiste en utilizar información contractual,
+demográfica, de servicios y facturación para desarrollar un sistema que
+permita:
 
 - identificar clientes con mayor probabilidad de churn;
-- generar un score de riesgo para cada cliente;
-- priorizar acciones de retención;
+- generar un score de riesgo;
+- priorizar campañas de retención;
 - apoyar la segmentación de clientes;
-- utilizar de forma más eficiente los recursos destinados a campañas comerciales.
+- utilizar de manera más eficiente los recursos comerciales.
 
 El problema se aborda como una tarea de **clasificación binaria**:
 
-- `Churn = 1`: el cliente canceló el servicio.
-- `Churn = 0`: el cliente permanece activo.
+```text
+Churn = 1 → el cliente canceló el servicio
+Churn = 0 → el cliente permanece activo
+```
 
-La métrica principal utilizada durante el desarrollo es **AUC-ROC**, complementada con:
+La métrica principal utilizada durante el desarrollo es **AUC-ROC**,
+complementada con:
 
 - Accuracy;
 - Precision;
@@ -55,7 +92,8 @@ La métrica principal utilizada durante el desarrollo es **AUC-ROC**, complement
 
 ## 📊 Datos
 
-El proyecto integra diferentes fuentes de información relacionadas con los clientes de Interconnect:
+El proyecto integra diferentes fuentes de información relacionadas con los
+clientes de Interconnect:
 
 - información contractual;
 - características personales;
@@ -66,11 +104,16 @@ El proyecto integra diferentes fuentes de información relacionadas con los clie
 - métodos de pago;
 - servicios adicionales contratados.
 
-El dataset integrado contiene información correspondiente a **7,043 clientes**.
+El dataset integrado contiene:
+
+```text
+7,043 clientes
+```
 
 Los datasets originales no se incluyen en este repositorio.
 
-Para ejecutar los notebooks localmente, los archivos originales deben colocarse dentro de:
+Para ejecutar los notebooks localmente, los archivos originales deben
+colocarse dentro de:
 
 ```text
 data/
@@ -83,20 +126,60 @@ Durante el procesamiento se generan archivos intermedios:
 data/
 ├── final_provider/          # datasets originales
 ├── interconnect_raw.csv     # dataset integrado
-└── interconnect_clean.csv   # dataset limpio utilizado para modelado
+└── interconnect_clean.csv   # dataset limpio para modelado
 ```
 
-La carpeta completa `data/` está excluida del control de versiones mediante `.gitignore`.
+La carpeta `data/` está excluida del control de versiones mediante
+`.gitignore`.
 
 ---
 
 ## 🔎 Metodología
 
-El proyecto se desarrolló siguiendo un flujo completo de Ciencia de Datos, desde la integración de las fuentes originales hasta la construcción, selección, evaluación e interpretación del modelo final.
+El proyecto sigue un flujo completo de Ciencia de Datos y Machine Learning:
 
-### 1. Comprensión e integración de datos
+```text
+Comprensión de datos
+        ↓
+Integración
+        ↓
+Limpieza
+        ↓
+EDA
+        ↓
+Feature Engineering
+        ↓
+Train/Test Split
+        ↓
+Preprocessing
+        ↓
+Comparación de modelos
+        ↓
+Optimización
+        ↓
+Selección del modelo
+        ↓
+Evaluación final
+        ↓
+Interpretabilidad
+        ↓
+Serialización
+        ↓
+API REST
+        ↓
+Dashboard
+        ↓
+Drift Monitoring
+        ↓
+Airflow
+```
 
-Se analizaron las diferentes fuentes de información, sus estructuras, tipos de variables y relaciones entre tablas antes de realizar su integración.
+---
+
+## 1. Comprensión e integración de datos
+
+Se analizaron las distintas fuentes de información antes de realizar su
+integración.
 
 Las principales tareas incluyeron:
 
@@ -105,76 +188,75 @@ Las principales tareas incluyeron:
 - verificación de dimensiones;
 - revisión de tipos de datos;
 - identificación de relaciones entre tablas;
-- integración de las fuentes disponibles;
-- construcción de un dataset maestro.
+- integración de las fuentes;
+- construcción del dataset maestro.
 
 Notebook:
 
-[`01_comprension_e_integracion.ipynb`](notebooks/01_comprension_e_integracion.ipynb)
+[`notebooks/01_comprension_e_integracion.ipynb`](notebooks/01_comprension_e_integracion.ipynb)
 
 ---
 
-### 2. Limpieza y análisis exploratorio
+## 2. Limpieza y análisis exploratorio
 
-Se realizaron tareas de:
+La etapa de preparación inicial incluyó:
 
 - revisión y conversión de tipos de datos;
 - tratamiento de valores ausentes;
 - identificación de inconsistencias;
 - construcción de la variable objetivo;
 - análisis de la distribución de churn;
-- análisis exploratorio de características numéricas;
-- análisis exploratorio de características categóricas;
-- evaluación de patrones asociados con la cancelación;
-- preparación de un dataset limpio para modelado.
+- análisis de características numéricas;
+- análisis de características categóricas;
+- evaluación de patrones relacionados con churn;
+- preparación del dataset para modelado.
 
 Notebook:
 
-[`02_limpieza_y_eda.ipynb`](notebooks/02_limpieza_y_eda.ipynb)
+[`notebooks/02_limpieza_y_eda.ipynb`](notebooks/02_limpieza_y_eda.ipynb)
 
 ---
 
-### 3. Preparación y modelado
+## 3. Preparación y modelado
 
 La etapa de Machine Learning incluyó:
 
 - selección de variables predictoras;
-- separación de entrenamiento y prueba;
-- transformación de variables numéricas y categóricas;
+- prevención de data leakage;
+- división entrenamiento/prueba;
+- preprocessing;
 - construcción de pipelines;
-- validación cruzada estratificada de cinco folds;
-- establecimiento de modelos baseline;
-- comparación de distintos algoritmos;
+- validación cruzada estratificada;
+- establecimiento de baseline;
+- comparación de algoritmos;
 - optimización de hiperparámetros;
-- evaluación de CatBoost con One-Hot Encoding;
-- evaluación de CatBoost con manejo nativo de categorías;
-- selección del modelo final;
-- evaluación sobre el conjunto de prueba;
-- análisis de importancia de variables;
-- interpretación mediante valores SHAP.
+- evaluación final;
+- análisis de generalización;
+- interpretabilidad;
+- exportación del pipeline para producción.
 
 Notebook:
 
-[`03_preparacion_y_modelado.ipynb`](notebooks/03_preparacion_y_modelado.ipynb)
+[`notebooks/03_preparacion_y_modelado.ipynb`](notebooks/03_preparacion_y_modelado.ipynb)
 
 ---
 
-### 4. Informe de solución y estrategia de negocio
+## 4. Informe de solución y estrategia de negocio
 
-Los resultados del modelado se consolidaron en un informe final que integra:
+Los resultados se consolidaron en un informe que integra:
 
-- evaluación del modelo seleccionado;
-- interpretación de resultados;
-- principales variables predictivas;
+- evaluación del modelo;
+- interpretación;
+- variables predictivas principales;
 - limitaciones;
 - aplicación operacional;
 - selección del threshold;
 - recomendaciones de negocio;
-- posibles mejoras futuras.
+- mejoras futuras.
 
 Notebook:
 
-[`04_informe_solucion.ipynb`](notebooks/04_informe_solucion.ipynb)
+[`notebooks/04_informe_solucion.ipynb`](notebooks/04_informe_solucion.ipynb)
 
 Informe:
 
@@ -184,37 +266,39 @@ Informe:
 
 ## 🔀 División de los datos
 
-Para mantener una evaluación metodológicamente correcta, el conjunto de prueba permaneció separado durante el desarrollo del modelo.
-
-La división utilizada fue:
+Para mantener una evaluación metodológicamente correcta, el conjunto de prueba
+permaneció separado durante el desarrollo del modelo.
 
 ```text
-Dataset total:     7,043 clientes
-Training set:      5,634 clientes
-Test set:          1,409 clientes
+Dataset total:    7,043 clientes
+Training set:     5,634 clientes
+Test set:         1,409 clientes
 ```
 
-La división se realizó utilizando estratificación para conservar aproximadamente la misma proporción de clientes churn y no churn en ambos conjuntos.
+La división se realizó utilizando estratificación para mantener una
+distribución similar de churn en ambos conjuntos.
 
 El conjunto de prueba permaneció aislado durante:
 
-- análisis para selección del modelo;
 - selección de variables;
 - comparación de algoritmos;
 - optimización de hiperparámetros;
-- selección de la configuración final.
+- selección del modelo final.
 
-Únicamente después de cerrar estas decisiones se utilizó el conjunto de prueba para estimar la capacidad de generalización del modelo.
+Solo después de finalizar estas decisiones se utilizó para estimar la
+capacidad de generalización del modelo.
 
 ---
 
 ## 📏 Estrategia de evaluación
 
-La métrica principal utilizada fue:
+## Métrica principal
 
 **AUC-ROC**
 
-Esta métrica permite evaluar la capacidad del modelo para distinguir entre clientes que cancelan y clientes que permanecen utilizando las probabilidades estimadas por el modelo.
+AUC-ROC permite evaluar la capacidad del modelo para distinguir entre clientes
+que cancelan y clientes que permanecen utilizando las probabilidades
+estimadas.
 
 Como métricas complementarias se utilizaron:
 
@@ -224,19 +308,17 @@ Como métricas complementarias se utilizaron:
 - F1-score;
 - matriz de confusión.
 
-La validación de modelos se realizó mediante:
+La validación durante entrenamiento utilizó:
 
-**Stratified 5-Fold Cross Validation**
-
-Esto permitió comparar los algoritmos bajo una metodología consistente y redujo la dependencia de una única división de los datos.
+```text
+Stratified 5-Fold Cross Validation
+```
 
 ---
 
 ## 🤖 Modelos evaluados
 
-Durante el proyecto se compararon diferentes algoritmos utilizando el mismo esquema de validación cruzada y las mismas métricas.
-
-Los principales modelos evaluados fueron:
+Durante el proyecto se compararon:
 
 - DummyClassifier;
 - Logistic Regression;
@@ -244,583 +326,973 @@ Los principales modelos evaluados fueron:
 - Gradient Boosting;
 - CatBoost.
 
+Todos los modelos se evaluaron bajo una estrategia consistente para permitir
+una comparación metodológicamente válida.
+
 ---
 
 ## 📉 Baseline
 
-Se utilizó `DummyClassifier` como referencia mínima para verificar que los modelos desarrollados realmente aprendieran patrones relevantes.
+Se utilizó `DummyClassifier` como referencia mínima.
 
-El modelo Dummy obtuvo aproximadamente:
+Resultados aproximados:
 
 | Métrica | Resultado |
 | --- | ---: |
 | AUC-ROC | **0.5000** |
 | Accuracy | **0.7346** |
 
-El AUC-ROC de `0.50` representa un comportamiento equivalente al azar en términos de capacidad discriminativa.
+Un AUC-ROC cercano a `0.50` representa una capacidad discriminativa equivalente
+al azar.
 
 ---
 
 ## 📈 Regresión Logística
 
-La Regresión Logística se utilizó como baseline interpretable.
+La regresión logística se utilizó como modelo lineal de referencia.
 
-Resultados aproximados mediante validación cruzada:
+Su inclusión permite:
 
-| Métrica | Resultado CV |
-| --- | ---: |
-| AUC-ROC | **0.8399** |
-| Accuracy | **0.8007** |
+- establecer una baseline interpretable;
+- medir la ganancia obtenida por modelos no lineales;
+- comparar complejidad frente a rendimiento.
 
-La mejora frente al Dummy confirmó que las variables utilizadas contienen información predictiva relevante relacionada con el churn.
+Las variables categóricas se transformaron mediante One-Hot Encoding y las
+variables continuas mediante escalamiento.
 
 ---
 
 ## 🌲 Comparación inicial de modelos
 
-Durante la primera comparación, los principales resultados de AUC-ROC fueron aproximadamente:
+Se evaluaron modelos con distinta capacidad para capturar relaciones no
+lineales.
 
-| Modelo | AUC-ROC CV |
-| --- | ---: |
-| Gradient Boosting | **0.8477** |
-| CatBoost | **0.8448** |
-| Logistic Regression | **0.8399** |
-| Random Forest | **0.8182** |
-| DummyClassifier | **0.5000** |
+Los modelos basados en árboles mostraron una capacidad discriminativa superior
+a las alternativas más simples.
 
-Gradient Boosting y CatBoost mostraron los mejores resultados entre los modelos no lineales.
-
-Por esta razón fueron seleccionados como principales candidatos para optimización de hiperparámetros.
-
-Logistic Regression se conservó como baseline interpretable.
+Los mejores candidatos fueron posteriormente optimizados mediante búsqueda de
+hiperparámetros y validación cruzada.
 
 ---
 
 ## ⚙️ Optimización de modelos
 
-Los modelos con mejor desempeño fueron optimizados utilizando búsqueda de hiperparámetros y validación cruzada estratificada.
+## Gradient Boosting
 
-### Gradient Boosting
+Se evaluaron diferentes configuraciones del algoritmo para estudiar su
+capacidad de modelar relaciones no lineales.
 
-Después del tuning:
+## CatBoost
 
-```text
-AUC-ROC CV ≈ 0.8505
+CatBoost presentó el mejor desempeño global y fue seleccionado para una
+optimización más profunda.
+
+Los mejores hiperparámetros obtenidos fueron:
+
+```python
+{
+    "learning_rate": 0.03,
+    "l2_leaf_reg": 5,
+    "iterations": 200,
+    "depth": 4,
+}
 ```
-
-### CatBoost
-
-Después del tuning:
-
-```text
-AUC-ROC CV ≈ 0.8506
-```
-
-La diferencia entre ambos modelos fue pequeña, por lo que se realizaron experimentos adicionales sobre la forma de manejar las variables categóricas en CatBoost.
 
 ---
 
 ## 🧪 CatBoost: One-Hot Encoding vs categorías nativas
 
-Se compararon dos estrategias para utilizar CatBoost:
+Se evaluaron dos estrategias:
 
-1. variables categóricas transformadas mediante **One-Hot Encoding**;
-2. variables categóricas tratadas de forma **nativa por CatBoost**.
+```text
+CatBoost + One-Hot Encoding
+CatBoost + categorías nativas
+```
 
-Los resultados obtenidos fueron:
+La comparación permitió validar empíricamente cuál configuración ofrecía
+mejor desempeño bajo el esquema de validación utilizado.
 
-| Estrategia | AUC-ROC CV |
-| --- | ---: |
-| CatBoost OHE Tuned | **0.850601** |
-| CatBoost Native Tuned | **0.850246** |
-| CatBoost Native Baseline | **0.847987** |
-| CatBoost OHE Baseline | **0.844751** |
+La configuración seleccionada fue:
 
-En los modelos baseline, el manejo nativo de categorías mejoró el desempeño de CatBoost.
-
-Sin embargo, después de la optimización ambas estrategias presentaron resultados muy similares.
-
-La configuración:
-
-**CatBoost + One-Hot Encoding**
-
-obtuvo el mayor AUC-ROC promedio durante validación cruzada y fue seleccionada **antes de evaluar el conjunto de prueba**.
+```text
+CatBoostClassifier + One-Hot Encoding
+```
 
 ---
 
 ## 🏆 Modelo final
 
-El modelo seleccionado fue:
+## CatBoostClassifier + One-Hot Encoding
 
-### CatBoostClassifier + One-Hot Encoding
+El modelo final forma parte de un `Pipeline` de Scikit-learn que integra
+preprocessing y estimador.
 
-La selección se realizó utilizando exclusivamente los resultados obtenidos sobre el conjunto de entrenamiento mediante validación cruzada.
+Esto permite utilizar exactamente las mismas transformaciones durante:
 
-El conjunto de prueba no participó en la decisión del modelo final.
+```text
+training
+   ↓
+validation
+   ↓
+testing
+   ↓
+API inference
+```
+
+El artefacto de producción se encuentra en:
+
+```text
+models/churn_pipeline.joblib
+```
+
+El objeto serializado corresponde al pipeline completo y no únicamente al
+estimador CatBoost.
+
+---
+
+## 🧩 Variables utilizadas por el modelo
+
+El pipeline final utiliza **23 variables predictoras**.
+
+## Variables continuas
+
+```text
+MonthlyCharges
+TotalCharges
+```
+
+Se procesan mediante `StandardScaler`.
+
+## Variables binarias/discretas
+
+```text
+SeniorCitizen
+HasInternet
+HasPhone
+InternetAddOnCount
+StreamingCount
+HasTechProtection
+AutomaticPayment
+```
+
+## Variables categóricas
+
+```text
+Type
+PaperlessBilling
+PaymentMethod
+gender
+Partner
+Dependents
+InternetService
+OnlineSecurity
+OnlineBackup
+DeviceProtection
+TechSupport
+StreamingTV
+StreamingMovies
+MultipleLines
+```
+
+Las variables categóricas utilizan:
+
+```python
+OneHotEncoder(handle_unknown="ignore")
+```
+
+---
+
+## 🛡️ Prevención de data leakage
+
+Las siguientes variables no forman parte del conjunto de predictores:
+
+```text
+Churn
+customerID
+EndDate
+EndDateParsed
+EffectiveEndDate
+BeginDate
+HistoricalTenure
+```
+
+`HistoricalTenure` no se utiliza como predictor oficial porque su construcción
+puede depender de información disponible después de la cancelación.
+
+En un escenario real, cualquier variable de antigüedad debe calcularse
+utilizando únicamente información disponible al momento de la predicción.
 
 ---
 
 ## 📈 Resultados finales
 
-El modelo final obtuvo los siguientes resultados:
+Resultados oficiales del modelo:
 
 | Métrica | Resultado |
 | --- | ---: |
-| AUC-ROC — Validación cruzada | **0.8506** |
-| AUC-ROC — Test | **0.8440** |
-| Accuracy — Test | **0.8077** |
+| CV AUC-ROC | **0.8506** |
+| Test AUC-ROC | **0.8440** |
+| Test Accuracy | **0.8077** |
 | Precision — Churn | **0.67** |
 | Recall — Churn | **0.53** |
 | F1-score — Churn | **0.60** |
 
-Los valores calculados directamente durante la evaluación fueron:
+Valores completos de AUC-ROC:
 
 ```text
-CV AUC-ROC:     0.850601
-Test AUC-ROC:   0.843972
-Test Accuracy:  0.807665
+CV AUC-ROC:    0.850601
+Test AUC-ROC:  0.843972
+```
+
+Threshold oficial:
+
+```text
+0.50
 ```
 
 ---
 
 ## 📊 Generalización
 
-La diferencia entre el AUC-ROC obtenido mediante validación cruzada y el conjunto de prueba fue aproximadamente:
+La diferencia entre validación cruzada y test es pequeña:
 
 ```text
-Test AUC - CV AUC ≈ -0.00663
+CV AUC-ROC      ≈ 0.8506
+Test AUC-ROC    ≈ 0.8440
 ```
 
-Esta reducción relativamente pequeña sugiere que el modelo mantiene un comportamiento razonablemente consistente sobre datos no utilizados durante su desarrollo.
-
-No se observa una caída pronunciada entre validación cruzada y test.
+Esto indica que el rendimiento observado durante entrenamiento se mantiene de
+forma razonablemente consistente sobre datos no utilizados durante la
+optimización.
 
 ---
 
 ## 🎯 Rendimiento sobre la clase Churn
 
-El reporte de clasificación sobre el conjunto de prueba fue aproximadamente:
-
-| Clase | Precision | Recall | F1-score | Casos |
-| --- | ---: | ---: | ---: | ---: |
-| No Churn | 0.84 | 0.91 | 0.87 | 1035 |
-| Churn | 0.67 | 0.53 | 0.60 | 374 |
-
-Accuracy global:
+Sobre los clientes que realmente cancelaron:
 
 ```text
-0.8077
+Precision: 0.67
+Recall:    0.53
+F1-score:  0.60
 ```
+
+El recall muestra que el modelo detecta aproximadamente la mitad de los
+clientes que efectivamente cancelan utilizando el threshold oficial de `0.50`.
+
+La probabilidad generada por el modelo también puede utilizarse directamente
+como **score de riesgo** para priorizar campañas sin modificar el modelo
+entrenado.
 
 ---
 
 ## 🧮 Matriz de confusión
 
-Utilizando el threshold estándar de `0.5`, los resultados fueron:
+Resultados sobre el conjunto de prueba:
+
+| | Predicción No Churn | Predicción Churn |
+| --- | ---: | ---: |
+| **Real No Churn** | 938 | 97 |
+| **Real Churn** | 174 | 200 |
+
+Equivalente a:
 
 ```text
-True Negatives:   938
-False Positives:   97
-False Negatives:  174
-True Positives:   200
+TN = 938
+FP = 97
+FN = 174
+TP = 200
 ```
 
-En el conjunto de prueba existían:
+El conjunto de test contiene:
 
 ```text
-374 clientes que realmente cancelaron
+1,409 clientes
+1,035 No Churn
+374 Churn
 ```
-
-El modelo identificó correctamente:
-
-```text
-200 clientes churn
-```
-
-mientras que:
-
-```text
-174 clientes churn
-```
-
-fueron clasificados como clientes que permanecerían.
-
-Esto se refleja en un Recall para la clase Churn cercano a:
-
-```text
-0.53
-```
-
-Aunque el modelo presenta una capacidad discriminativa útil, una implementación comercial debería analizar cuidadosamente el umbral de decisión.
-
-El threshold de `0.5` no necesariamente representa la opción económicamente óptima para una estrategia de retención.
 
 ---
 
 ## 🔍 Interpretabilidad del modelo
 
-Para comprender el comportamiento del modelo se utilizaron dos enfoques:
+La interpretación del modelo se realizó mediante:
 
-1. importancia interna de características de CatBoost;
-2. valores SHAP.
+- feature importance;
+- análisis SHAP.
 
-Debido a que el pipeline final utiliza One-Hot Encoding, las variables categóricas se transforman en múltiples columnas.
-
-Para facilitar la interpretación desde una perspectiva de negocio, las importancias fueron agrupadas nuevamente a nivel de variable original.
+Estas técnicas ayudan a comprender qué variables tienen mayor peso predictivo
+en las decisiones del modelo.
 
 ---
 
 ## 📊 Principales variables predictivas
 
-Las variables con mayor relevancia predictiva fueron:
+Entre las variables con mayor importancia se encuentran:
 
-1. `Type`
-2. `TotalCharges`
-3. `InternetService`
-4. `MonthlyCharges`
-5. `OnlineSecurity`
-6. `TechSupport`
-7. `PaymentMethod`
-
-La importancia agrupada obtenida mediante CatBoost fue aproximadamente:
-
-| Variable | Importancia |
+| Variable | Importancia aproximada |
 | --- | ---: |
-| Type | **28.12** |
-| TotalCharges | **21.52** |
-| InternetService | **14.05** |
-| MonthlyCharges | **6.86** |
-| OnlineSecurity | **4.49** |
-| TechSupport | **4.28** |
-| PaymentMethod | **4.24** |
+| Type | 28.12 |
+| TotalCharges | 21.52 |
+| InternetService | 14.05 |
+| MonthlyCharges | 6.86 |
+| OnlineSecurity | 4.49 |
+| TechSupport | 4.28 |
+| PaymentMethod | 4.24 |
 
-El **tipo de contrato** presentó la mayor relevancia predictiva, seguido de los cargos acumulados y el tipo de servicio de Internet.
-
-Estos resultados son consistentes con diferentes patrones identificados durante el análisis exploratorio.
+Estas importancias indican **relevancia predictiva**, no causalidad.
 
 ---
 
 ## ⚠️ Importancia predictiva ≠ causalidad
 
-Las importancias representan asociaciones predictivas dentro del modelo.
+Una variable con importancia elevada no implica necesariamente que modificar
+esa variable produzca directamente una reducción del churn.
 
-No deben interpretarse automáticamente como relaciones causales.
+El modelo identifica asociaciones presentes en los datos históricos.
 
-Por ejemplo:
+Las decisiones comerciales deben complementarse con:
 
-si `PaymentMethod` aparece como una variable importante, no puede concluirse que cambiar el método de pago provoque directamente una reducción del churn.
-
-Únicamente puede afirmarse que el modelo encontró esa variable útil para distinguir clientes con diferentes patrones de cancelación.
-
-Por lo tanto:
-
-```text
-Importancia predictiva ≠ causalidad
-```
-
-Las estrategias comerciales derivadas del análisis deben validarse mediante experimentos controlados.
+- conocimiento del negocio;
+- experimentación;
+- pruebas A/B;
+- análisis causal cuando sea necesario.
 
 ---
 
 ## 💼 Aplicación de negocio
 
-La principal utilidad del modelo no consiste únicamente en generar una clasificación:
+El modelo permite transformar cada cliente en una probabilidad:
 
 ```text
-Churn / No Churn
+P(Churn = 1)
 ```
 
-sino en producir una:
+Esta probabilidad puede utilizarse como score para priorizar acciones de
+retención.
+
+Ejemplo:
 
 ```text
-probabilidad estimada de churn
+Cliente
+   ↓
+Datos contractuales y de servicios
+   ↓
+Pipeline ML
+   ↓
+Probabilidad de churn
+   ↓
+Nivel de riesgo
+   ↓
+Acción comercial
 ```
-
-para cada cliente.
-
-Esta probabilidad puede utilizarse como un **score de riesgo**.
-
-En lugar de aplicar una campaña general a toda la base de clientes, la empresa podría utilizar este score para ordenar a los clientes según su riesgo estimado.
 
 ---
 
-## 🔄 Flujo operativo propuesto
+## 🎯 Segmentación operacional de riesgo
 
-Una posible integración del modelo dentro del proceso comercial sería:
-
-```text
-Clientes activos
-       ↓
-Preparación de variables
-       ↓
-Modelo de churn
-       ↓
-Probabilidad de cancelación
-       ↓
-Ranking de riesgo
-       ↓
-Segmentación
-       ↓
-Campaña de retención
-       ↓
-Medición de resultados
-       ↓
-Retroalimentación
-```
-
-De esta manera, Marketing podría concentrar recursos en los clientes con mayor riesgo estimado.
-
----
-
-## 🎯 Segmentación de clientes
-
-El score de churn podría utilizarse para construir segmentos como:
+La aplicación utiliza tres bandas descriptivas:
 
 ```text
-Riesgo alto
-Riesgo medio
-Riesgo bajo
+LOW     < 0.30
+MEDIUM  0.30 – 0.59
+HIGH    ≥ 0.60
 ```
 
-La definición exacta de los segmentos debería depender de:
+Estas bandas sirven únicamente para facilitar la interpretación en la
+interfaz.
 
-- presupuesto disponible;
-- tamaño de la campaña;
-- costo de la acción de retención;
-- valor esperado de cada cliente;
-- capacidad operativa del equipo comercial.
+**No sustituyen el threshold oficial de clasificación del modelo**, que
+permanece en:
 
-La probabilidad estimada por el modelo debería utilizarse como indicador principal de riesgo.
-
-Las variables predictivas deberían emplearse como información complementaria para interpretar y segmentar los perfiles.
+```text
+0.50
+```
 
 ---
 
 ## 💡 Recomendaciones de negocio
 
-Los resultados sugieren analizar especialmente clientes asociados con características como:
+El score de churn puede utilizarse para:
 
-- contratos de menor duración;
-- contratos mes a mes;
-- determinados métodos de pago;
-- cargos mensuales elevados;
-- determinados tipos de servicio de Internet;
-- ausencia de soporte técnico;
-- ausencia de seguridad en línea.
+- priorizar clientes con mayor riesgo;
+- adaptar campañas de retención;
+- ofrecer incentivos diferenciados;
+- revisar contratos con mayor exposición al churn;
+- analizar servicios asociados con abandono;
+- optimizar recursos del equipo comercial.
 
-Entre las posibles estrategias a evaluar se encuentran:
+La estrategia ideal debe considerar además:
 
-- incentivos para migrar de contratos mensuales hacia contratos de mayor duración;
-- revisión de planes para clientes con cargos mensuales elevados;
-- promociones relacionadas con soporte técnico;
-- promociones relacionadas con seguridad en línea;
-- incentivos para determinados métodos de pago;
-- campañas específicas para clientes con scores elevados de churn;
-- estrategias diferenciadas por nivel de riesgo.
-
-Estas acciones deben considerarse **hipótesis comerciales**, no consecuencias causales demostradas por el modelo.
-
-Su efectividad debería evaluarse mediante experimentos controlados, como pruebas A/B.
+```text
+probabilidad de churn
++
+valor económico del cliente
++
+costo de intervención
++
+beneficio esperado
+```
 
 ---
 
 ## ⚖️ Selección del threshold
 
-El umbral utilizado durante la evaluación oficial fue:
+El modelo oficial utiliza:
 
 ```text
-0.5
+threshold = 0.50
 ```
 
-Este valor funciona como una referencia estándar para convertir probabilidades en clases.
+Sin embargo, el threshold puede ajustarse según el objetivo de negocio.
 
-Sin embargo, desde una perspectiva comercial, el threshold óptimo debería determinarse utilizando información económica.
+Reducirlo puede aumentar el recall y permitir detectar más clientes con riesgo,
+pero también puede incrementar falsos positivos.
 
-Entre los factores relevantes se encuentran:
-
-- costo de una acción de retención;
-- valor esperado de conservar un cliente;
-- costo de adquisición de nuevos clientes;
-- pérdida económica asociada al churn;
-- presupuesto disponible para campañas;
-- cantidad máxima de clientes que pueden ser contactados.
-
-Reducir el threshold puede incrementar el Recall y detectar más clientes que posteriormente cancelarían.
-
-Sin embargo, también incrementaría los falsos positivos y el costo de las campañas.
-
-Por esta razón, una futura implementación debería optimizar el punto de operación del modelo utilizando criterios de negocio y no exclusivamente métricas estadísticas.
+Por esta razón, cualquier cambio futuro debería considerar costos comerciales
+y no únicamente métricas estadísticas.
 
 ---
 
-## ⚠️ Limitaciones
+## 🚀 Arquitectura del proyecto
 
-El proyecto presenta varias limitaciones.
-
-### Rendimiento predictivo
-
-El modelo final obtiene un AUC-ROC cercano a:
+El proyecto separa entrenamiento, inferencia, visualización, monitoreo y
+orquestación.
 
 ```text
-0.844
+                      ┌──────────────────────────┐
+                      │    Datos de clientes     │
+                      └────────────┬─────────────┘
+                                   │
+                                   ▼
+                      ┌──────────────────────────┐
+                      │ Limpieza + EDA + Feature │
+                      │ Engineering              │
+                      │ notebooks/               │
+                      └────────────┬─────────────┘
+                                   │
+                                   ▼
+                      ┌──────────────────────────┐
+                      │ Pipeline de ML           │
+                      │ CatBoost + OHE           │
+                      └────────────┬─────────────┘
+                                   │
+                                   ▼
+                      ┌──────────────────────────┐
+                      │ churn_pipeline.joblib    │
+                      │ models/                  │
+                      └────────────┬─────────────┘
+                                   │
+                  ┌────────────────┴────────────────┐
+                  │                                 │
+                  ▼                                 ▼
+       ┌──────────────────────┐          ┌──────────────────────┐
+       │ FastAPI              │          │ Streamlit            │
+       │ api/                 │◄─────────│ dashboard/           │
+       │ REST Prediction API  │          │ Executive Dashboard  │
+       └──────────────────────┘          └──────────────────────┘
+
+
+       ┌────────────────────────────────────────────────────────┐
+       │                 MODEL MONITORING                       │
+       │                                                        │
+       │ reference_profile.json                                 │
+       │          ↓                                             │
+       │ current_batch.csv                                      │
+       │          ↓                                             │
+       │ monitoring/drift.py                                    │
+       │          ↓                                             │
+       │ PSI drift report                                       │
+       └─────────────────────────┬──────────────────────────────┘
+                                 │
+                                 ▼
+                      ┌──────────────────────────┐
+                      │ Apache Airflow           │
+                      │ Daily orchestration      │
+                      └──────────────────────────┘
 ```
-
-por lo que todavía existe margen para mejorar su capacidad predictiva.
-
-### Recall
-
-Con threshold `0.5`, el Recall de churn es aproximadamente:
-
-```text
-0.53
-```
-
-Esto significa que una proporción relevante de las cancelaciones reales no es identificada.
-
-### Información disponible
-
-El dataset está compuesto principalmente por información:
-
-- contractual;
-- demográfica;
-- servicios contratados;
-- facturación;
-- métodos de pago.
-
-No dispone de algunas variables que podrían aportar información adicional, como:
-
-- satisfacción del cliente;
-- número de reclamaciones;
-- interrupciones del servicio;
-- calidad de conexión;
-- llamadas al centro de atención;
-- historial de promociones;
-- modificaciones recientes del plan;
-- comportamiento de uso;
-- consumo reciente;
-- interacciones recientes con soporte.
 
 ---
 
-## ⏳ Limitación temporal: HistoricalTenure
+## 🌐 REST API — FastAPI
 
-Durante el análisis se exploró una variable denominada:
+La inferencia del modelo se expone mediante una API REST implementada con
+FastAPI.
 
-```text
-HistoricalTenure
-```
-
-Esta variable representa la duración histórica del contrato.
-
-Sin embargo, no fue incluida en el modelo principal.
-
-Para clientes que cancelaron, su cálculo depende de la fecha real de cancelación.
-
-En un escenario de predicción real, esa fecha todavía no sería conocida.
-
-Utilizarla directamente como predictor introduciría:
-
-**fuga de información temporal (*temporal data leakage*)**.
-
-Por esta razón, `HistoricalTenure` fue excluida del pipeline oficial.
-
-En producción, una variable de antigüedad debería calcularse utilizando:
+Archivo principal:
 
 ```text
-fecha de predicción - BeginDate
+api/main.py
 ```
 
-y nunca una fecha futura de cancelación.
+Esquemas y validación:
+
+```text
+api/schemas.py
+```
+
+Endpoints disponibles:
+
+| Método | Endpoint | Descripción |
+| --- | --- | --- |
+| GET | `/` | Estado general del servicio |
+| GET | `/health` | Health check del modelo |
+| GET | `/model-info` | Información del modelo |
+| POST | `/predict` | Predicción de churn |
 
 ---
 
-## 🚀 Futuras mejoras
+## Validación de entradas
 
-Entre las posibles extensiones del proyecto se encuentran:
+La API utiliza Pydantic para verificar:
 
-- incorporación de nuevas fuentes de datos;
-- construcción de variables relacionadas con comportamiento reciente;
-- creación de snapshots históricos de clientes;
-- cálculo temporalmente correcto de la antigüedad;
-- análisis de calibración de probabilidades;
-- optimización del threshold según costos de negocio;
-- evaluación de modelos adicionales de gradient boosting;
-- nuevas estrategias de feature engineering;
-- monitoreo de drift;
-- seguimiento del rendimiento del modelo;
-- reentrenamiento periódico;
-- experimentos controlados para evaluar estrategias de retención.
+- tipos de datos;
+- cargos no negativos;
+- variables binarias;
+- consistencia de telefonía;
+- consistencia de servicios de Internet;
+- presencia de todas las variables requeridas.
+
+Ejemplo:
+
+```text
+HasPhone = 0
+→ MultipleLines debe ser "No phone service"
+```
+
+y:
+
+```text
+HasInternet = 0
+→ InternetService debe ser "No internet service"
+```
+
+junto con los servicios adicionales correspondientes.
 
 ---
 
-## 🕒 Snapshots temporales
+## Ejemplo de respuesta
 
-Una mejora especialmente importante sería construir snapshots históricos.
+La API devuelve información con una estructura conceptual similar a:
 
-Por ejemplo:
-
-```text
-Cliente A — Enero
-Cliente A — Febrero
-Cliente A — Marzo
-Cliente A — Abril
+```json
+{
+  "churn_probability": 0.26085351452633293,
+  "churn_prediction": 0,
+  "risk_level": "LOW"
+}
 ```
-
-Cada observación representaría únicamente la información conocida hasta ese momento.
-
-Este enfoque permitiría:
-
-- calcular correctamente la antigüedad;
-- crear variables de comportamiento reciente;
-- evitar leakage temporal;
-- construir escenarios más similares a una implementación real.
 
 ---
 
-## 🧪 Validación futura
+## 📊 Dashboard — Streamlit
 
-El conjunto de prueba utilizado para la evaluación oficial no debería reutilizarse para seleccionar nuevas mejoras.
+El proyecto incluye un dashboard desarrollado con Streamlit.
 
-Los futuros experimentos deberían evaluarse utilizando:
+Archivo:
 
-- nuevos conjuntos temporales;
-- nuevas particiones de validación;
-- datos futuros;
-- esquemas de backtesting temporal.
+```text
+dashboard/app.py
+```
 
-De esta manera se preserva la independencia del conjunto de prueba oficial.
+El dashboard consume la **API FastAPI** en lugar de cargar directamente el
+artefacto `joblib`.
+
+Esto mantiene separación entre:
+
+```text
+modelo
+API
+interfaz
+```
+
+El dashboard incluye cuatro áreas principales:
+
+1. **Executive Overview**
+2. **Model Performance**
+3. **Model Monitoring**
+4. **Customer Risk Prediction**
 
 ---
 
-## 🧪 Experimentos adicionales
+## Executive Overview
 
-Los experimentos desarrollados después de cerrar el resultado oficial se mantendrán separados del pipeline principal.
-
-En particular, futuras pruebas relacionadas con variables de antigüedad como:
+Presenta las métricas principales:
 
 ```text
-ApproxTenure
-HistoricalTenure
+CV AUC-ROC       0.8506
+Test AUC-ROC     0.8440
+Accuracy         0.8077
+Recall Churn     0.53
 ```
 
-tendrán carácter experimental.
+---
 
-Estos experimentos:
+## Model Performance
 
-- no modificarán las métricas oficiales;
-- no reemplazarán el modelo validado;
-- se documentarán de forma separada;
-- utilizarán nuevas estrategias de validación cuando corresponda.
+Incluye:
 
-El resultado oficial del proyecto permanece:
+- matriz de confusión;
+- importancia de variables;
+- métricas del modelo.
+
+---
+
+## Customer Risk Prediction
+
+El usuario puede introducir las características de un cliente y obtener:
 
 ```text
-CatBoostClassifier + One-Hot Encoding
-
-CV AUC-ROC:    0.850601
-Test AUC-ROC:  0.843972
-Test Accuracy: 0.807665
+probabilidad de churn
+predicción binaria
+nivel de riesgo
 ```
+
+Las variables derivadas se calculan automáticamente desde la interfaz para
+mantener consistencia con el pipeline.
+
+---
+
+## 📡 Monitoreo de Data Drift
+
+El proyecto implementa un sistema de monitoreo basado en:
+
+**Population Stability Index — PSI**
+
+Archivo principal:
+
+```text
+monitoring/drift.py
+```
+
+El objetivo es comparar la distribución utilizada como referencia durante
+entrenamiento con lotes posteriores de datos.
+
+---
+
+## Umbrales PSI
+
+Los estados definidos son:
+
+| PSI | Estado |
+| --- | --- |
+| `< 0.10` | Stable |
+| `0.10 – < 0.25` | Moderate |
+| `>= 0.25` | Significant |
+
+---
+
+## 🧬 Reference Profile
+
+El perfil de referencia se construye utilizando exclusivamente:
+
+```text
+X_train
+```
+
+y se almacena en:
+
+```text
+monitoring/reference_profile.json
+```
+
+Para variables numéricas almacena información como:
+
+- media;
+- desviación estándar;
+- mínimo;
+- máximo;
+- límites de bins;
+- proporciones.
+
+Para variables categóricas almacena la distribución relativa de cada
+categoría.
+
+---
+
+## 🔬 Variables monitorizadas
+
+El sistema monitorea:
+
+## Numéricas
+
+```text
+MonthlyCharges
+TotalCharges
+```
+
+## Categóricas
+
+```text
+Type
+PaymentMethod
+InternetService
+PaperlessBilling
+MultipleLines
+```
+
+---
+
+## 🧪 Validación del sistema de drift
+
+Se implementaron dos escenarios.
+
+## Validation batch
+
+El conjunto de test se utiliza únicamente como un lote independiente de
+demostración para validar el funcionamiento del monitor.
+
+Resultados:
+
+| Variable | PSI | Estado |
+| --- | ---: | --- |
+| TotalCharges | 0.016154 | stable |
+| MonthlyCharges | 0.009980 | stable |
+| Type | 0.005251 | stable |
+| PaymentMethod | 0.003691 | stable |
+| InternetService | 0.001412 | stable |
+| MultipleLines | 0.001216 | stable |
+| PaperlessBilling | 0.000187 | stable |
+
+Todos los valores permanecen por debajo de:
+
+```text
+PSI = 0.10
+```
+
+Este escenario demuestra que el sistema puede evaluar un lote independiente,
+pero **no representa monitoreo real de producción**.
+
+---
+
+## Synthetic drift simulation
+
+Para comprobar que el detector realmente responde ante cambios
+distribucionales se creó una simulación controlada.
+
+Se modificaron:
+
+```text
+MonthlyCharges
+Type
+```
+
+Resultados principales:
+
+| Variable | PSI | Estado |
+| --- | ---: | --- |
+| Type | 5.779197 | significant |
+| MonthlyCharges | 5.727768 | significant |
+| TotalCharges | 0.016154 | stable |
+| PaymentMethod | 0.003691 | stable |
+| InternetService | 0.001412 | stable |
+| MultipleLines | 0.001216 | stable |
+| PaperlessBilling | 0.000187 | stable |
+
+El experimento demuestra que el sistema:
+
+```text
+mantiene stable variables sin cambios
++
+detecta significant drift cuando la distribución cambia
+```
+
+---
+
+## ⚙️ Pipeline operativo de monitoring
+
+El script operacional se encuentra en:
+
+```text
+airflow/scripts/run_monitoring.py
+```
+
+Su flujo es:
+
+```text
+reference_profile.json
+        ↓
+current_batch.csv
+        ↓
+generate_drift_report_from_profile()
+        ↓
+drift_report_latest.csv
+```
+
+Los archivos generados en tiempo de ejecución:
+
+```text
+monitoring/current_batch.csv
+monitoring/drift_report_latest.csv
+```
+
+están excluidos del control de versiones.
+
+---
+
+## 🛫 Automatización con Apache Airflow
+
+El monitoreo se automatiza mediante:
+
+```text
+Apache Airflow 3.3.1
+```
+
+El DAG se encuentra en:
+
+```text
+airflow/dags/interconnect_monitoring_dag.py
+```
+
+DAG ID:
+
+```text
+interconnect_churn_monitoring
+```
+
+Frecuencia:
+
+```text
+@daily
+```
+
+---
+
+## Flujo del DAG
+
+```text
+interconnect_churn_monitoring
+          │
+          ▼
+validate_monitoring_script
+          │
+          ▼
+run_drift_monitoring
+          │
+          ▼
+run_monitoring.py
+          │
+          ▼
+drift_report_latest.csv
+```
+
+Las tareas realizan:
+
+### `validate_monitoring_script`
+
+Comprueba que el script operacional existe antes de iniciar el monitoring.
+
+### `run_drift_monitoring`
+
+Ejecuta el pipeline, registra stdout/stderr y falla explícitamente si el
+proceso termina con un código distinto de cero.
+
+---
+
+## Validación end-to-end
+
+El DAG fue probado mediante:
+
+```bash
+airflow dags test \
+  interconnect_churn_monitoring \
+  2026-08-31
+```
+
+Resultado:
+
+```text
+validate_monitoring_script → success
+run_drift_monitoring       → success
+DagRun                      → success
+```
+
+Esto valida la ejecución completa:
+
+```text
+Airflow
+   ↓
+script operacional
+   ↓
+drift engine
+   ↓
+reference profile
+   ↓
+current batch
+   ↓
+drift report
+```
+
+---
+
+## 🧪 Tests automatizados
+
+El proyecto incluye pruebas automatizadas con `pytest`.
+
+Actualmente:
+
+```text
+29 passed
+```
+
+La suite cubre tres componentes principales.
+
+## API
+
+Archivo:
+
+```text
+tests/test_api.py
+```
+
+Incluye pruebas sobre:
+
+- root endpoint;
+- health check;
+- información del modelo;
+- predicción válida;
+- probabilidad de referencia;
+- entradas inconsistentes;
+- cargos negativos;
+- campos faltantes;
+- validación de `SeniorCitizen`;
+- combinaciones inválidas de Internet;
+- estructura de respuesta;
+- tipos de datos de salida.
+
+## Dashboard
+
+Archivo:
+
+```text
+tests/test_dashboard.py
+```
+
+Valida la construcción de variables derivadas como:
+
+- disponibilidad de Internet;
+- telefonía;
+- servicios adicionales;
+- pagos automáticos;
+- protección tecnológica.
+
+## Drift monitoring
+
+Archivo:
+
+```text
+tests/test_drift.py
+```
+
+Valida:
+
+- PSI numérico;
+- PSI categórico;
+- clasificación de drift;
+- creación del reference profile;
+- persistencia JSON;
+- generación del reporte desde el perfil;
+- detección de cambios distribucionales.
 
 ---
 
@@ -829,10 +1301,29 @@ Test Accuracy: 0.807665
 ```text
 interconnect-churn-prediction/
 │
-├── README.md
-├── environment.yml
-├── requirements.txt
-├── .gitignore
+├── api/
+│   ├── __init__.py
+│   ├── main.py
+│   └── schemas.py
+│
+├── airflow/
+│   ├── dags/
+│   │   └── interconnect_monitoring_dag.py
+│   └── scripts/
+│       └── run_monitoring.py
+│
+├── dashboard/
+│   └── app.py
+│
+├── models/
+│   └── churn_pipeline.joblib
+│
+├── monitoring/
+│   ├── __init__.py
+│   ├── drift.py
+│   ├── reference_profile.json
+│   ├── drift_report_validation.csv
+│   └── drift_report_synthetic.csv
 │
 ├── notebooks/
 │   ├── 01_comprension_e_integracion.ipynb
@@ -840,17 +1331,37 @@ interconnect-churn-prediction/
 │   ├── 03_preparacion_y_modelado.ipynb
 │   └── 04_informe_solucion.ipynb
 │
-└── reports/
-    └── informe_solucion.md
+├── reports/
+│   └── informe_solucion.md
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_api.py
+│   ├── test_dashboard.py
+│   └── test_drift.py
+│
+├── .gitignore
+├── environment.yml
+├── requirements.txt
+├── requirements-airflow.txt
+├── LICENSE
+└── README.md
 ```
 
-Los datasets utilizados durante el desarrollo permanecen en el entorno local y están excluidos del repositorio mediante `.gitignore`.
+Los archivos de runtime no se versionan:
+
+```text
+data/
+airflow/runtime/
+monitoring/current_batch.csv
+monitoring/drift_report_latest.csv
+```
 
 ---
 
 ## 🛠️ Tecnologías utilizadas
 
-El proyecto utiliza principalmente:
+## Data Science
 
 - Python
 - Pandas
@@ -859,7 +1370,33 @@ El proyecto utiliza principalmente:
 - CatBoost
 - Matplotlib
 - Seaborn
+- SHAP
 - JupyterLab
+
+## Deployment
+
+- FastAPI
+- Uvicorn
+- Pydantic
+
+## Dashboard
+
+- Streamlit
+- Requests
+
+## Monitoring
+
+- Pandas
+- NumPy
+- PSI
+
+## Orquestación
+
+- Apache Airflow
+
+## Calidad
+
+- Pytest
 - Git
 - GitHub
 
@@ -867,40 +1404,56 @@ El proyecto utiliza principalmente:
 
 ## 📦 Versiones principales
 
-El entorno utilizado para reproducir el proyecto contiene las siguientes versiones principales:
+Entorno principal:
 
 | Tecnología | Versión |
-| --- | ---: |
-| Python | **3.10.21** |
-| NumPy | **2.2.6** |
-| Pandas | **2.3.3** |
-| Scikit-learn | **1.7.2** |
-| Matplotlib | **3.10.9** |
-| Seaborn | **0.13.2** |
-| CatBoost | **1.2.10** |
-| JupyterLab | **4.6.3** |
+| --- | --- |
+| Python | 3.10.21 |
+| NumPy | 2.2.6 |
+| Pandas | 2.3.3 |
+| Scikit-learn | 1.7.2 |
+| Matplotlib | 3.10.9 |
+| Seaborn | 0.13.2 |
+| CatBoost | 1.2.10 |
+| Joblib | 1.5.3 |
+| FastAPI | 0.141.1 |
+| Uvicorn | 0.52.4 |
+| Pydantic | 2.13.5 |
+| Starlette | 1.6.0 |
+| Requests | 2.34.2 |
+| HTTPX | 0.28.1 |
+| Streamlit | 1.62.0 |
+| Pytest | 9.1.1 |
+| JupyterLab | 4.6.3 |
+
+Airflow:
+
+| Tecnología | Versión |
+| --- | --- |
+| Python | 3.10 |
+| Apache Airflow | 3.3.1 |
+| NumPy | 2.2.6 |
+| Pandas | 2.3.3 |
 
 ---
 
 ## 🧪 Instalación y entorno de ejecución
 
-El proyecto puede reproducirse utilizando **Conda** o un entorno virtual de Python con **pip**.
+El proyecto utiliza dos entornos separados:
 
-### Opción 1 — Conda
-
-Clonar el repositorio:
-
-```bash
-git clone https://github.com/acj80/interconnect-churn-prediction.git
+```text
+interconnect-churn
+interconnect-airflow
 ```
 
-Entrar al proyecto:
+Esta separación evita introducir las numerosas dependencias de Airflow dentro
+del entorno principal de Machine Learning.
 
-```bash
-cd interconnect-churn-prediction
-```
+---
 
-Crear el entorno:
+## Opción 1 — Conda
+
+Crear el entorno principal:
 
 ```bash
 conda env create -f environment.yml
@@ -912,27 +1465,9 @@ Activarlo:
 conda activate interconnect-churn
 ```
 
-El entorno fue validado con:
-
-```text
-Python 3.10.21
-```
-
 ---
 
-### Opción 2 — pip
-
-Clonar el repositorio:
-
-```bash
-git clone https://github.com/acj80/interconnect-churn-prediction.git
-```
-
-Entrar al proyecto:
-
-```bash
-cd interconnect-churn-prediction
-```
+## Opción 2 — pip
 
 Crear un entorno virtual:
 
@@ -946,126 +1481,463 @@ Activarlo en macOS/Linux:
 source .venv/bin/activate
 ```
 
-Activarlo en Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-Instalar las dependencias:
+Instalar:
 
 ```bash
 pip install -r requirements.txt
-```
-
-Las dependencias principales definidas para el proyecto son:
-
-```text
-numpy==2.2.6
-pandas==2.3.3
-scikit-learn==1.7.2
-matplotlib==3.10.9
-seaborn==0.13.2
-catboost==1.2.10
-jupyterlab==4.6.3
 ```
 
 ---
 
 ## ▶️ Ejecución del proyecto
 
-Antes de ejecutar los notebooks, los datasets originales deben colocarse dentro de:
+## 1. API
 
-```text
-data/final_provider/
+Activar:
+
+```bash
+conda activate interconnect-churn
 ```
 
-Los notebooks deben ejecutarse en el siguiente orden:
+Ejecutar:
 
-1. [`01_comprension_e_integracion.ipynb`](notebooks/01_comprension_e_integracion.ipynb)
-2. [`02_limpieza_y_eda.ipynb`](notebooks/02_limpieza_y_eda.ipynb)
-3. [`03_preparacion_y_modelado.ipynb`](notebooks/03_preparacion_y_modelado.ipynb)
-4. [`04_informe_solucion.ipynb`](notebooks/04_informe_solucion.ipynb)
+```bash
+uvicorn api.main:app --reload
+```
 
-El flujo general es:
+La API estará disponible en:
 
 ```text
-Datos originales
-       ↓
-01 — Comprensión e integración
-       ↓
-interconnect_raw.csv
-       ↓
-02 — Limpieza y EDA
-       ↓
-interconnect_clean.csv
-       ↓
-03 — Preparación y modelado
-       ↓
-Modelo final + evaluación
-       ↓
-04 — Informe de solución
-       ↓
-Interpretación y estrategia de negocio
+http://127.0.0.1:8000
+```
+
+Documentación Swagger:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Health check:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+---
+
+## 2. Dashboard
+
+Con la API ejecutándose:
+
+```bash
+streamlit run dashboard/app.py
+```
+
+Streamlit mostrará la URL local en Terminal.
+
+---
+
+## 3. Tests
+
+Desde la raíz del proyecto:
+
+```bash
+pytest -v
+```
+
+Resultado esperado:
+
+```text
+29 passed
+```
+
+---
+
+## 4. Monitoring manual
+
+El lote actual debe existir en:
+
+```text
+monitoring/current_batch.csv
+```
+
+Después:
+
+```bash
+python airflow/scripts/run_monitoring.py
+```
+
+El script genera:
+
+```text
+monitoring/drift_report_latest.csv
+```
+
+---
+
+## 🛫 Configuración de Airflow
+
+Airflow utiliza un entorno dedicado.
+
+Crear el entorno:
+
+```bash
+conda create -n interconnect-airflow python=3.10 -y
+```
+
+Activarlo:
+
+```bash
+conda activate interconnect-airflow
+```
+
+---
+
+## Instalar Apache Airflow
+
+Definir versión:
+
+```bash
+AIRFLOW_VERSION=3.3.1
+```
+
+Obtener versión de Python:
+
+```bash
+PYTHON_VERSION="$(
+python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")'
+)"
+```
+
+Construir la URL oficial de constraints:
+
+```bash
+CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+```
+
+Instalar:
+
+```bash
+pip install \
+  "apache-airflow==${AIRFLOW_VERSION}" \
+  --constraint "${CONSTRAINT_URL}"
+```
+
+Instalar las dependencias utilizadas por el script de monitoring cuando sea
+necesario:
+
+```bash
+pip install \
+  numpy==2.2.6 \
+  pandas==2.3.3
+```
+
+Comprobar:
+
+```bash
+airflow version
+pip check
+```
+
+---
+
+## Configurar runtime de Airflow
+
+Desde la raíz del proyecto:
+
+```bash
+export AIRFLOW_HOME="$PWD/airflow/runtime"
+```
+
+Definir la carpeta de DAGs:
+
+```bash
+export AIRFLOW__CORE__DAGS_FOLDER="$PWD/airflow/dags"
+```
+
+Inicializar/migrar la metadata database:
+
+```bash
+airflow db migrate
+```
+
+Comprobar:
+
+```bash
+airflow db check
+```
+
+---
+
+## Validar DAG
+
+Parseo local:
+
+```bash
+airflow dags list --local
+```
+
+Validar errores:
+
+```bash
+airflow dags list-import-errors --local
+```
+
+El DAG esperado es:
+
+```text
+interconnect_churn_monitoring
+```
+
+---
+
+## Probar DAG end-to-end
+
+```bash
+airflow dags test \
+  interconnect_churn_monitoring \
+  2026-08-31
+```
+
+Resultado esperado:
+
+```text
+Dag run in success state
 ```
 
 ---
 
 ## 📄 Informe de solución
 
-El informe ejecutivo y técnico del proyecto se encuentra en:
+El análisis de negocio completo se encuentra en:
 
-[`reports/informe_solucion.md`](reports/informe_solucion.md)
+```text
+reports/informe_solucion.md
+```
 
-El documento resume:
+El informe integra:
 
-1. objetivo y problema de negocio;
-2. datos y metodología;
-3. modelo seleccionado;
-4. resultados finales;
-5. principales hallazgos;
-6. limitaciones;
-7. conclusiones;
-8. recomendaciones.
+- objetivo de negocio;
+- metodología;
+- modelo seleccionado;
+- evaluación;
+- interpretabilidad;
+- estrategia de retención;
+- threshold;
+- limitaciones;
+- recomendaciones;
+- futuras mejoras.
+
+---
+
+## ⚠️ Limitaciones
+
+## Rendimiento predictivo
+
+Un AUC-ROC de aproximadamente `0.844` representa una buena capacidad
+discriminativa, pero el modelo no identifica perfectamente todos los casos.
+
+---
+
+## Recall
+
+El recall de churn es aproximadamente:
+
+```text
+0.53
+```
+
+Por lo tanto, con threshold `0.50`, una parte de los clientes que cancelan no
+es identificada correctamente.
+
+---
+
+## Información disponible
+
+El modelo está limitado por las variables disponibles en el dataset.
+
+Variables potencialmente útiles en un entorno real podrían incluir:
+
+- interacciones con soporte;
+- reclamos;
+- consumo histórico;
+- cambios de plan;
+- comportamiento de pagos en el tiempo;
+- satisfacción del cliente;
+- uso de servicios;
+- eventos previos a cancelación.
+
+---
+
+## ⏳ Limitación temporal: HistoricalTenure
+
+Durante el análisis se estudió información temporal relacionada con la
+duración histórica del cliente.
+
+Sin embargo, `HistoricalTenure` no forma parte del modelo oficial porque su
+construcción puede depender de información futura para clientes cancelados.
+
+En producción, la antigüedad debe calcularse únicamente utilizando:
+
+```text
+fecha de predicción - BeginDate
+```
+
+sin utilizar información posterior al momento de scoring.
+
+---
+
+## 📡 Limitaciones del monitoring actual
+
+El proyecto implementa la infraestructura necesaria para detectar data drift,
+pero actualmente utiliza datasets históricos como demostración.
+
+El escenario:
+
+```text
+Validation batch
+```
+
+utiliza `X_test`.
+
+Esto **no debe interpretarse como evidencia de ausencia de drift en
+producción**.
+
+En un sistema real, `current_batch.csv` debería sustituirse por datos
+recibidos durante operación.
+
+---
+
+## 🚀 Futuras mejoras
+
+El proyecto puede extenderse mediante:
+
+- captura automática de datos de inferencia;
+- monitoreo continuo de predicciones;
+- model performance monitoring cuando exista ground truth;
+- alertas ante PSI significativo;
+- integración con Slack, correo o sistemas de incidentes;
+- almacenamiento histórico de drift reports;
+- dashboards temporales de drift;
+- retraining periódico;
+- model registry;
+- experiment tracking;
+- contenedores Docker;
+- CI/CD;
+- despliegue cloud;
+- autenticación de la API;
+- rate limiting;
+- persistencia de predicciones;
+- explainability individual por cliente.
+
+---
+
+## 🕒 Snapshots temporales
+
+Un sistema productivo debería generar snapshots de clientes en distintos
+momentos:
+
+```text
+cliente t0
+cliente t1
+cliente t2
+...
+```
+
+Esto permitiría construir modelos que representen mejor la evolución previa al
+churn.
+
+---
+
+## 🧪 Validación futura
+
+Una evolución natural sería evaluar el sistema mediante validación temporal:
+
+```text
+train → periodo histórico
+test  → periodo posterior
+```
+
+Esto proporcionaría una aproximación todavía más realista al uso futuro del
+modelo.
+
+---
+
+## 🧪 Experimentos adicionales
+
+Posibles extensiones del modelado:
+
+- XGBoost;
+- LightGBM;
+- calibración de probabilidades;
+- optimización del threshold basada en costo;
+- cost-sensitive learning;
+- undersampling/oversampling;
+- feature engineering temporal;
+- ensembles;
+- análisis causal;
+- survival analysis.
+
+Estas alternativas deben compararse utilizando el mismo procedimiento de
+validación para mantener consistencia metodológica.
 
 ---
 
 ## 📌 Resultado principal
 
-El proyecto demuestra que la información contractual, de servicios y facturación permite construir un modelo con capacidad útil para priorizar clientes según su riesgo de cancelación.
-
-El modelo final:
-
-```text
-CatBoostClassifier + One-Hot Encoding
-```
-
-alcanzó:
+El proyecto demuestra un flujo completo de Machine Learning que va más allá
+del entrenamiento de un modelo:
 
 ```text
-AUC-ROC CV:     0.850601
-AUC-ROC Test:   0.843972
-Accuracy Test:  0.807665
+Datos
+  ↓
+EDA
+  ↓
+Feature Engineering
+  ↓
+Machine Learning
+  ↓
+Evaluación
+  ↓
+Interpretabilidad
+  ↓
+Modelo serializado
+  ↓
+FastAPI
+  ↓
+Streamlit
+  ↓
+Drift Monitoring
+  ↓
+Apache Airflow
 ```
 
-El valor principal para una futura implementación comercial no sería únicamente la clasificación binaria, sino la **probabilidad estimada de churn**, utilizada como score para priorizar acciones de retención.
+El modelo final alcanza:
 
-La selección final del threshold debería realizarse utilizando costos y beneficios reales del negocio.
+```text
+CV AUC-ROC:    0.8506
+Test AUC-ROC:  0.8440
+Accuracy:      0.8077
+```
+
+y queda integrado dentro de una arquitectura que permite realizar
+predicciones, visualizar resultados, validar entradas, monitorear cambios
+distribucionales y automatizar el proceso de monitoring.
 
 ---
 
 ## 👤 Autor
 
-**Alan Calderón**
+**Alan Calderón Jiménez**
 
-Data Scientist
-
-Proyecto desarrollado como parte de la formación profesional en Ciencia de Datos de **TripleTen**.
+Proyecto desarrollado como parte de formación profesional en Ciencia de Datos
+y Machine Learning.
 
 ---
 
 ## 📚 Proyecto
 
-**Customer Churn Prediction — Interconnect**
+**Interconnect — Customer Churn Prediction**
 
-Machine Learning · Classification · Customer Churn · CatBoost · Scikit-learn · SHAP · Data Science
+Proyecto end-to-end de Ciencia de Datos, Machine Learning, deployment y
+monitoring aplicado a predicción de churn en telecomunicaciones.
