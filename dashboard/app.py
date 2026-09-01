@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import streamlit as st
+from pathlib import Path
 
 
 API_BASE_URL = "http://127.0.0.1:8000"
@@ -356,15 +357,239 @@ def render_model_performance() -> None:
         "budget and operational capacity."
     )
 
+# ==================================================
+# ==================================================
+
+
+def render_model_monitoring() -> None:
+    st.divider()
+    st.header("3. Model Monitoring")
+
+    project_root = (
+        Path(__file__).resolve().parent.parent
+    )
+
+    monitoring_dir = (
+        project_root / "monitoring"
+    )
+
+    validation_path = (
+        monitoring_dir
+        / "drift_report_validation.csv"
+    )
+
+    synthetic_path = (
+        monitoring_dir
+        / "drift_report_synthetic.csv"
+    )
+
+    st.write(
+        "Monitor distribution changes between the "
+        "training reference profile and incoming data."
+    )
+
+    scenario = st.selectbox(
+        "Monitoring scenario",
+        [
+            "Validation batch",
+            "Synthetic drift simulation",
+        ],
+    )
+
+    if scenario == "Validation batch":
+        report_path = validation_path
+
+        st.caption(
+            "Held-out test data used as an independent "
+            "validation batch. This is not live production traffic."
+        )
+
+    else:
+        report_path = synthetic_path
+
+        st.caption(
+            "Controlled synthetic scenario created to demonstrate "
+            "that the monitoring system detects substantial "
+            "distribution shifts."
+        )
+
+    if not report_path.exists():
+        st.warning(
+            "The selected monitoring report "
+            "is not available yet."
+        )
+        return
+
+    drift_report = pd.read_csv(
+        report_path
+    )
+
+    stable_count = int(
+        (
+            drift_report["drift_status"]
+            == "stable"
+        ).sum()
+    )
+
+    moderate_count = int(
+        (
+            drift_report["drift_status"]
+            == "moderate"
+        ).sum()
+    )
+
+    significant_count = int(
+        (
+            drift_report["drift_status"]
+            == "significant"
+        ).sum()
+    )
+
+    total_features = len(
+        drift_report
+    )
+
+    if significant_count > 0:
+        overall_status = "SIGNIFICANT DRIFT"
+
+    elif moderate_count > 0:
+        overall_status = "MODERATE DRIFT"
+
+    else:
+        overall_status = "STABLE"
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric(
+            "Features monitored",
+            total_features,
+        )
+
+    with col2:
+        st.metric(
+            "Stable",
+            stable_count,
+        )
+
+    with col3:
+        st.metric(
+            "Moderate drift",
+            moderate_count,
+        )
+
+    with col4:
+        st.metric(
+            "Significant drift",
+            significant_count,
+        )
+
+    st.markdown(
+        "### Overall Monitoring Status"
+    )
+
+    if overall_status == "STABLE":
+        st.success(
+            "STABLE — No relevant distribution drift "
+            "was detected in the selected batch."
+        )
+
+    elif overall_status == "MODERATE DRIFT":
+        st.warning(
+            "MODERATE DRIFT — At least one monitored "
+            "feature requires additional review."
+        )
+
+    else:
+        st.error(
+            "SIGNIFICANT DRIFT — At least one monitored "
+            "feature shows a substantial distribution shift."
+        )
+
+    st.markdown(
+        "### PSI by Feature"
+    )
+
+    psi_chart = (
+        drift_report[
+            [
+                "feature",
+                "psi",
+            ]
+        ]
+        .sort_values(
+            "psi",
+            ascending=False,
+        )
+        .set_index(
+            "feature"
+        )
+    )
+
+    st.bar_chart(
+        psi_chart
+    )
+
+    st.markdown(
+        "### Drift Detail"
+    )
+
+    display_report = (
+        drift_report.copy()
+    )
+
+    display_report["psi"] = (
+        display_report["psi"]
+        .round(4)
+    )
+
+    display_report[
+        "reference_mean"
+    ] = (
+        display_report[
+            "reference_mean"
+        ]
+        .round(2)
+    )
+
+    display_report[
+        "current_mean"
+    ] = (
+        display_report[
+            "current_mean"
+        ]
+        .round(2)
+    )
+
+    display_report[
+        "mean_change_pct"
+    ] = (
+        display_report[
+            "mean_change_pct"
+        ]
+        .round(2)
+    )
+
+    st.dataframe(
+        display_report,
+        use_container_width=True,
+    )
+
+    st.caption(
+        "PSI interpretation used by this project: "
+        "< 0.10 stable, 0.10–0.25 moderate drift, "
+        "and ≥ 0.25 significant drift."
+    )
 
 # ==================================================
 # Prediction form
 # ==================================================
 
+
 def render_prediction_form() -> tuple[bool, dict]:
 
     st.divider()
-    st.header("3. Customer Risk Prediction")
+    st.header("4. Customer Risk Prediction")
 
     st.write(
         "Enter the customer's current profile to estimate "
@@ -721,6 +946,8 @@ def main() -> None:
     render_executive_overview()
 
     render_model_performance()
+
+    render_model_monitoring()
 
     submitted, payload = (
         render_prediction_form()

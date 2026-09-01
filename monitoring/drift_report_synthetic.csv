@@ -1,0 +1,8 @@
+feature,feature_type,psi,drift_status,reference_mean,current_mean,mean_change_pct
+Type,categorical,5.779197167078541,significant,,,
+MonthlyCharges,numeric,5.7277682867859845,significant,64.574494142705,105.51022001419446,63.39302601585145
+TotalCharges,numeric,0.01615370435577462,stable,2282.145145544906,2270.094357700497,-0.5280465122007724
+PaymentMethod,categorical,0.003691124128793098,stable,,,
+InternetService,categorical,0.0014124766254228157,stable,,,
+MultipleLines,categorical,0.0012159397966212816,stable,,,
+PaperlessBilling,categorical,0.00018673885347839835,stable,,,
