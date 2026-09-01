@@ -1,0 +1,8 @@
+# Dedicated dependencies for the interconnect-airflow environment.
+# Install Apache Airflow using the official constraints file.
+
+
+
+apache-airflow==3.3.1
+numpy==2.2.6
+pandas==2.3.3
